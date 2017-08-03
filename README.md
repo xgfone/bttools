@@ -9,7 +9,7 @@ $ go install github.com/xgfone/bttools
 
 ## Usage
 
-```bash
+```shell
 $ bttools.exe -h
 NAME:
    bttools.exe - BT tool collection
@@ -31,7 +31,7 @@ GLOBAL OPTIONS:
 
 ### The sub-command `torrent` of `bttools`
 
-```bash
+```shell
 $ bttools.exe torrent -h
 NAME:
    bttools.exe torrent - Handle a metainfo file.
@@ -48,7 +48,7 @@ OPTIONS:
 ```
 
 #### The sub-command `download` of `torrent`
-```bash
+```shell
 $ bttools.exe torrent download -h
 NAME:
    bttools.exe torrent download - Download the torrent about the infohash.
@@ -69,7 +69,7 @@ OPTIONS:
 
 #### The sub-command `dump` of `torrent`
 
-```bash
+```shell
 $ bttools.exe torrent dump -h
 NAME:
    bttools.exe torrent dump - Dump the information of a .torrent file.
@@ -85,12 +85,12 @@ OPTIONS:
 ## Todo List
 
 - [x] Download the .torrent file by the infohash.
-- [x] dump the information of a .torrent file to JSON.
+- [x] Dump the information of a .torrent file to JSON.
 - [ ] Downlaod the file by the .torrent file.
 
 
 ## Platform
 
-- [x] Unix/Linux
 - [x] Windows
 - [x] Mac OS X
+- [x] Unix/Linux
