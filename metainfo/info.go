@@ -22,12 +22,12 @@ type InfoDict struct {
 
 	// Single file
 	Name   string `json:"name"`
-	Length int64  `json:"length"`
+	Length int64  `json:"length,omitempty"`
 	Md5sum string `json:"md5sum,omitempty"`
 
 	// Multiple files
 	Files       []FileDict `json:"files,omitempty"`
-	PieceLength int64      `json:"piece length,omitempty" bencode:"piece length"`
+	PieceLength int64      `json:"piece length" bencode:"piece length"`
 	Pieces      string     `json:"-"`
 	Private     int64      `json:"-"`
 }
@@ -36,12 +36,12 @@ type InfoDict struct {
 type MetaInfo struct {
 	Info         InfoDict   `json:"info"`
 	InfoHash     string     `json:"info hash,omitempty" bencode:"info hash"`
-	Announce     string     `json:"announce"`
-	AnnounceList [][]string `json:"announce-list" bencode:"announce-list"`
-	CreationDate int64      `json:"creation date" bencode:"creation date"`
+	Announce     string     `json:"announce,omitempty"`
+	AnnounceList [][]string `json:"announce-list,omitempty" bencode:"announce-list"`
+	CreationDate int64      `json:"creation date,omitempty" bencode:"creation date"`
 	Comment      string     `json:"comment,omitempty"`
-	CreatedBy    string     `json:"created by" bencode:"created by"`
-	Encoding     string     `json:"encoding"`
+	CreatedBy    string     `json:"created by,omitempty" bencode:"created by"`
+	Encoding     string     `json:"encoding,omitempty"`
 }
 
 // Parse reads .torrent file, un-bencode it and load them into MetaInfo struct.
@@ -59,15 +59,29 @@ func (m *MetaInfo) Parse(r io.Reader) (err error) {
 		return e
 	}
 
+	if m.Encoding != "" {
+		e := m.Encoding
+		m.Comment = ToUtf8(e, m.Comment)
+		m.CreatedBy = ToUtf8(e, m.CreatedBy)
+		m.Info.Name = ToUtf8(e, m.Info.Name)
+
+		for _, file := range m.Info.Files {
+			for j, path := range file.Path {
+				file.Path[j] = ToUtf8(e, path)
+			}
+		}
+	}
+
 	return
 }
 
 // GetPiecesList splits pieces string into an array of 20 byte SHA1 hashes.
-func (m *MetaInfo) GetPiecesList() []string {
-	var piecesList []string
-	piecesLen := len(m.Info.Pieces)
+func (m *MetaInfo) GetPiecesList() [][]byte {
+	var piecesList [][]byte
+	pieces := []byte(m.Info.Pieces)
+	piecesLen := len(pieces)
 	for i, j := 0, 0; i < piecesLen; i, j = i+20, j+1 {
-		piecesList = append(piecesList, m.Info.Pieces[i:i+19])
+		piecesList = append(piecesList, pieces[i:i+19])
 	}
 	return piecesList
 }
