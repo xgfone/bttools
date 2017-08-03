@@ -86,7 +86,7 @@ OPTIONS:
 
 - [x] Download the .torrent file by the infohash.
 - [x] Dump the information of a .torrent file to JSON.
-- [ ] Downlaod the file by the .torrent file.
+- [ ] Download the files by the .torrent file.
 
 
 ## Platform
