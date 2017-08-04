@@ -45,6 +45,8 @@ func (u Urn) String() string {
 }
 
 // Magnet is a struct of the magnet url.
+//
+// See https://en.wikipedia.org/wiki/Magnet_URI_scheme
 type Magnet struct {
 	// Display Name
 	Dn string `json:"dn,omitempty"`
