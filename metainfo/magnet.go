@@ -15,35 +15,6 @@ var (
 	ErrInvalidFormat = fmt.Errorf("The format is invalid")
 )
 
-// Urn stands for the information of a urn.
-type Urn struct {
-	Type  string
-	Value string
-}
-
-// ParseUrn parses a url to Urn.
-func ParseUrn(urn string) (u Urn, err error) {
-	if len(urn) < 6 || urn[:4] != "urn:" {
-		err = ErrInvalidFormat
-		return
-	}
-
-	items := str.SplitStringN(urn, ":", 2)
-	if len(items) != 3 || items[0] == "" || items[1] == "" || items[2] == "" {
-		println("222222222", items)
-		err = ErrInvalidFormat
-		return
-	}
-
-	u.Type = items[1]
-	u.Value = items[2]
-	return
-}
-
-func (u Urn) String() string {
-	return fmt.Sprintf("urn:%s:%s", u.Type, u.Value)
-}
-
 // Magnet is a struct of the magnet url.
 //
 // See https://en.wikipedia.org/wiki/Magnet_URI_scheme
