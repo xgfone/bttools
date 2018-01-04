@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/xgfone/go-tools/str"
+	"github.com/xgfone/go-tools/strings2"
 )
 
 var (
@@ -57,7 +57,7 @@ func (m *Magnet) Parse(rawurl string) (err error) {
 	items := strings.Split(rawurl[8:], "&")
 	for _, item := range items {
 		// two := strings.Split(item, "=")
-		two := str.SplitStringN(item, "=", 1)
+		two := strings2.SplitStringN(item, "=", 1)
 		if len(two) != 2 || two[1] == "" {
 			continue
 		}

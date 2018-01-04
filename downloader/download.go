@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/xgfone/go-tools/nets"
+	"github.com/xgfone/go-tools/net2"
 )
 
 var (
@@ -37,7 +37,7 @@ var (
 
 // SetHostPost resets the host and the port of the downloaded url.
 func SetHostPost(host string, port int) {
-	downlandedAddress = nets.JoinHostPort(host, port)
+	downlandedAddress = net2.JoinHostPort(host, port)
 }
 
 func getDownloadedAddress(_defaultAddr string) string {

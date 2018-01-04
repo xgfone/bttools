@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/xgfone/go-tools/str"
+	"github.com/xgfone/go-tools/strings2"
 )
 
 func init() {
@@ -75,7 +75,7 @@ func ParseUrn(urn string) (Urn, error) {
 		return nil, ErrInvalidFormat
 	}
 
-	items := str.SplitStringN(urn, ":", 2)
+	items := strings2.SplitStringN(urn, ":", 2)
 	if len(items) != 3 || items[0] == "" || items[1] == "" || items[2] == "" {
 		return nil, ErrInvalidFormat
 	}

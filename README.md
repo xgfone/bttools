@@ -4,6 +4,7 @@ A tool collection about BitTorrent.
 ## Installation
 ```shell
 $ go get -u github.com/xgfone/bttools
+$ cd $GOPATH/src/github.com/xgfone/bttools && dep ensure
 $ go install github.com/xgfone/bttools
 ```
 
