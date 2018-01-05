@@ -1,4 +1,4 @@
-package metainfo
+package magnet
 
 import (
 	"fmt"

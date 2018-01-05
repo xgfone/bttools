@@ -1,6 +1,7 @@
 package metainfo
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -44,8 +45,8 @@ type MetaInfo struct {
 	Encoding     string     `json:"encoding,omitempty"`
 }
 
-// Parse reads .torrent file, un-bencode it and load them into MetaInfo struct.
-func (m *MetaInfo) Parse(r io.Reader) (err error) {
+// Parse reads the .torrent file, un-bencode it and load them into MetaInfo.
+func Parse(r io.Reader) (m MetaInfo, err error) {
 	defer func() {
 		if e := recover(); e != nil {
 			err = fmt.Errorf("bencode unmarshal panic: %v", e)
@@ -54,9 +55,9 @@ func (m *MetaInfo) Parse(r io.Reader) (err error) {
 
 	// Decode bencoded metainfo file.
 	// 丢弃piece部分，节省90%以上流量
-	e := bencode.Unmarshal(r, m)
-	if e != nil && e.Error() != "ignore piece" {
-		return e
+	err = bencode.Unmarshal(r, &m)
+	if err != nil && err.Error() != "ignore piece" {
+		return
 	}
 
 	if m.Encoding != "" {
@@ -75,8 +76,13 @@ func (m *MetaInfo) Parse(r io.Reader) (err error) {
 	return
 }
 
+// ParseFromBytes parse the metainfo from the []byte.
+func ParseFromBytes(data []byte) (MetaInfo, error) {
+	return Parse(bytes.NewBuffer(data))
+}
+
 // GetPiecesList splits pieces string into an array of 20 byte SHA1 hashes.
-func (m *MetaInfo) GetPiecesList() [][]byte {
+func (m MetaInfo) GetPiecesList() [][]byte {
 	var piecesList [][]byte
 	pieces := []byte(m.Info.Pieces)
 	piecesLen := len(pieces)
@@ -87,11 +93,11 @@ func (m *MetaInfo) GetPiecesList() [][]byte {
 }
 
 // JSON converts the metainfo to json.
-func (m *MetaInfo) JSON() ([]byte, error) {
+func (m MetaInfo) JSON() ([]byte, error) {
 	return json.Marshal(m)
 }
 
 // IndentedJSON converts the metainfo to the indented json.
-func (m *MetaInfo) IndentedJSON(prefix, indent string) ([]byte, error) {
+func (m MetaInfo) IndentedJSON(prefix, indent string) ([]byte, error) {
 	return json.MarshalIndent(m, prefix, indent)
 }

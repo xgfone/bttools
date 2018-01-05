@@ -59,8 +59,8 @@ func dumpMetaInfo(file string) (info []byte, err error) {
 	}
 	defer f.Close()
 
-	m := new(metainfo.MetaInfo)
-	if err = m.Parse(f); err != nil {
+	m, err := metainfo.Parse(f)
+	if err != nil {
 		return
 	}
 

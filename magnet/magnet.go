@@ -1,4 +1,4 @@
-package metainfo
+package magnet
 
 import (
 	"bytes"
@@ -48,9 +48,10 @@ type Magnet struct {
 // Parse parses a magnet url.
 //
 // The url must start with "magnet:?".
-func (m *Magnet) Parse(rawurl string) (err error) {
+func Parse(rawurl string) (m Magnet, err error) {
 	if len(rawurl) < 12 || rawurl[:8] != "magnet:?" {
-		return ErrInvalidFormat
+		err = ErrInvalidFormat
+		return
 	}
 
 	var urn Urn
