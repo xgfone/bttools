@@ -15,9 +15,12 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/urfave/cli/v2"
 	"github.com/xgfone/gconf/v5"
 	"github.com/xgfone/goapp"
+	"github.com/xgfone/gover"
 )
 
 var commands []*cli.Command
@@ -33,10 +36,17 @@ func initLogging() {
 	goapp.InitLogging(loglevel, logfile)
 }
 
+func init() {
+	cli.VersionPrinter = func(c *cli.Context) {
+		fmt.Fprintln(c.App.Writer, c.App.Version)
+	}
+}
+
 func main() {
 	gconf.RegisterOpts(goapp.LogOpts...)
 	app := cli.NewApp()
 	app.Usage = "A BitTorrent Tools"
+	app.Version = gover.Version
 	app.Commands = commands
 	app.RunAndExitOnError()
 }
