@@ -80,15 +80,10 @@ func printTorrentFile(filename string) {
 	// Print the info part
 	fmt.Println("Info:")
 	fmt.Printf("    Name: %s\n", info.Name)
-	fmt.Printf("    TotalLength: %d\n", info.TotalLength())
+	printSingalFile("    ", info)
 	fmt.Printf("    PieceLength: %d\n", info.PieceLength)
 	fmt.Printf("    PieceNumber: %d\n", info.CountPieces())
-	fmt.Printf("    Files:\n")
-	for _, file := range info.AllFiles() {
-		fmt.Printf("        PathName: %s\n", file.Path(info))
-		fmt.Printf("        Length: %d\n", file.Length)
-		fmt.Println()
-	}
+	printMultiFiles("    ", info)
 }
 
 func printValue(name string, v interface{}) {
@@ -129,5 +124,25 @@ func printURLList(mi metainfo.MetaInfo) {
 	fmt.Println("URLs:")
 	for _, s := range mi.URLList {
 		printValue("    ", s)
+	}
+}
+
+func printSingalFile(prefix string, info metainfo.Info) {
+	if !info.IsDir() {
+		fmt.Printf("%sLength: %d\n", prefix, info.Length)
+	}
+}
+
+func printMultiFiles(prefix string, info metainfo.Info) {
+	if info.IsDir() {
+		fmt.Printf("%sTotalLength: %d\n", prefix, info.TotalLength())
+		fmt.Printf("%sFiles:\n", prefix)
+		for _, file := range info.AllFiles() {
+			fmt.Printf("%s    PathName: %s\n", prefix, file.Path(info))
+			fmt.Printf("%s    Length: %d\n", prefix, file.Length)
+			fmt.Println()
+		}
+	} else {
+		fmt.Println()
 	}
 }
