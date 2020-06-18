@@ -17,7 +17,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/urfave/cli/v2"
@@ -29,7 +28,7 @@ func init() {
 	RegisterCmd(&cli.Command{
 		Name:      "getpeers",
 		Usage:     "Get the peers of the torrent from the given tracker",
-		ArgsUsage: "TORRENT_INFOHASH TRACER_URL",
+		ArgsUsage: "TORRENT_INFOHASH TRACER_URL [TRACER_URL] [TRACER_URL]",
 		Flags: []cli.Flag{&cli.DurationFlag{
 			Name:  "timeout",
 			Value: time.Minute,
@@ -41,39 +40,22 @@ func init() {
 				cli.ShowCommandHelpAndExit(ctx, "getpeers", 0)
 			}
 
-			id := metainfo.NewRandomHash()
-			infohash := metainfo.NewHashFromHexString(args[0])
-			req := tracker.AnnounceRequest{InfoHash: infohash, PeerID: id}
-
-			clients := make([]tracker.Client, 0)
-			for _, t := range args[1:] {
-				client, err := tracker.NewClient(t)
-				if err != nil {
-					return err
-				}
-				clients = append(clients, client)
-			}
-
 			timeout := ctx.Duration("timeout")
 			c, cancel := context.WithTimeout(context.Background(), timeout)
 			defer cancel()
 
-			wg := new(sync.WaitGroup)
-			for _, client := range clients {
-				wg.Add(1)
-				go func(client tracker.Client) {
-					defer wg.Done()
-					resp, err := client.Announce(c, req)
-					if err != nil {
-						fmt.Printf("%s: %s\n", client.String(), err)
-					} else {
-						for _, addr := range resp.Addresses {
-							fmt.Println(addr.String())
-						}
-					}
-				}(client)
+			infohash := metainfo.NewHashFromHexString(args[0])
+			resp := tracker.GetPeers(c, metainfo.Hash{}, infohash, args[1:])
+			for r := range resp {
+				if r.Error != nil {
+					fmt.Printf("%s: %s\n", r.Tracker, r.Error.Error())
+					continue
+				}
+
+				for _, addr := range r.Resp.Addresses {
+					fmt.Println(addr.String())
+				}
 			}
-			wg.Wait()
 
 			return nil
 		},
