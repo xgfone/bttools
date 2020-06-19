@@ -27,7 +27,7 @@ import (
 func init() { RegisterCmd(printCmd) }
 
 var printCmd = &cli.Command{
-	Name:  "print",
+	Name:  "printinfo",
 	Usage: "Print the metainfo of the torrent file",
 	Action: func(ctx *cli.Context) error {
 		printTorrentFiles(ctx.Args().Slice())
@@ -93,15 +93,14 @@ func printValue(name string, v interface{}) {
 }
 
 func printTrackers(mi metainfo.MetaInfo) {
-	if mi.Announce == "" && len(mi.AnnounceList) == 0 {
+	announces := mi.Announces().Unique()
+	if len(announces) == 0 {
 		return
 	}
+
 	fmt.Println("Trackers:")
-	printValue("    ", mi.Announce)
-	for _, ss := range mi.AnnounceList {
-		for _, s := range ss {
-			printValue("    ", s)
-		}
+	for _, s := range announces {
+		printValue("    ", s)
 	}
 }
 
