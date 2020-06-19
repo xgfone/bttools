@@ -1,5 +1,5 @@
 # bttools
-A command tool collection about BitTorrent.
+A command tool collection about BitTorrent. And you can consider it as the example of the development library [`bt`](https://github.com/xgfone/bt).
 
 ## 1 Install
 ```shell
