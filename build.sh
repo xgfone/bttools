@@ -10,5 +10,10 @@ COMMIT=$(git rev-parse HEAD 2>/dev/null)
 VERSION=$(git describe --tags 2>/dev/null)
 BUILD_DATE=$(date +"%s")
 
+CMD=$1
+if [ "COMMAND$CMD" == "COMMAND" ]; then
+    CMD="build"
+fi
+
 # Build App
-go build -ldflags "-w -X github.com/xgfone/gover.Commit=$COMMIT -X github.com/xgfone/gover.Version=$VERSION -X github.com/xgfone/gover.BuildTime=$BUILD_DATE" github.com/xgfone/bttools/...
+go $CMD -ldflags "-w -X github.com/xgfone/gover.Commit=$COMMIT -X github.com/xgfone/gover.Version=$VERSION -X github.com/xgfone/gover.BuildTime=$BUILD_DATE" github.com/xgfone/bttools/...
