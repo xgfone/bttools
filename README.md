@@ -4,7 +4,8 @@ A command tool collection about BitTorrent.
 ## 1 Install
 ```shell
 $ go get -u github.com/xgfone/bttools
-$ go install github.com/xgfone/bttools/...
+$ cd $GOPATH/src/github.com/xgfone/bttools
+$ ./build.sh install
 ```
 
 ## 2 Commands
@@ -19,6 +20,9 @@ NAME:
 USAGE:
    torrent [global options] command [command options] [arguments...]
 
+VERSION:
+   v0.2.0
+
 COMMANDS:
    download   Download the file from the remote peers
    getpeers   Get the peers of the torrent from the given tracker
@@ -26,7 +30,8 @@ COMMANDS:
    help, h    Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --help, -h  show help (default: false)
+   --help, -h     show help (default: false)
+   --version, -v  print the version (default: false)
 ```
 
 #### 2.2 Sub-Command `printinfo`
