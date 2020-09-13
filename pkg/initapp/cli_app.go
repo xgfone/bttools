@@ -12,41 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package initapp
 
 import (
 	"fmt"
 
 	"github.com/urfave/cli/v2"
 	"github.com/xgfone/gconf/v5"
-	"github.com/xgfone/goapp"
+	"github.com/xgfone/goapp/config"
 	"github.com/xgfone/gover"
 )
 
-var commands []*cli.Command
-
-// RegisterCmd registers the command as the sub-command of the root.
-func RegisterCmd(cmd *cli.Command) {
-	commands = append(commands, cmd)
-}
-
-func initLogging() {
-	logfile := gconf.GetString(goapp.LogOpts[0].Name)
-	loglevel := gconf.GetString(goapp.LogOpts[1].Name)
-	goapp.InitLogging(loglevel, logfile)
-}
-
 func init() {
+	gconf.UnregisterOpts(gconf.ConfigFileOpt)
 	cli.VersionPrinter = func(c *cli.Context) {
 		fmt.Fprintln(c.App.Writer, c.App.Version)
 	}
 }
 
-func main() {
-	gconf.RegisterOpts(goapp.LogOpts...)
+// NewApp creates and returns a new cli.App.
+func NewApp() *cli.App {
 	app := cli.NewApp()
 	app.Usage = "A BitTorrent Tools"
 	app.Version = gover.Version
-	app.Commands = commands
-	app.RunAndExitOnError()
+	app.Before = func(*cli.Context) error { InitLogging(); return nil }
+	app.Flags = config.ConvertOptsToCliFlags()
+	return app
 }

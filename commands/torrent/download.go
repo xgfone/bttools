@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package torrent
 
 import (
 	"crypto/sha1"
@@ -30,10 +30,10 @@ import (
 )
 
 func init() {
-	RegisterCmd(&cli.Command{
+	registerCmd(&cli.Command{
 		Name:      "download",
 		Usage:     "Download the file from the remote peers",
-		ArgsUsage: "TORRENT_FILE",
+		ArgsUsage: "<TORRENT_FILE>",
 		Flags: []cli.Flag{
 			&cli.StringSliceFlag{
 				Name:  "tracker",

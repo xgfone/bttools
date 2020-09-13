@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package torrent
 
 import (
 	"fmt"
@@ -24,11 +24,12 @@ import (
 	"github.com/xgfone/bt/metainfo"
 )
 
-func init() { RegisterCmd(printCmd) }
+func init() { registerCmd(printCmd) }
 
 var printCmd = &cli.Command{
-	Name:  "printinfo",
-	Usage: "Print the metainfo of the torrent file",
+	Name:      "printinfo",
+	Usage:     "Print the metainfo of the torrent file",
+	ArgsUsage: "<TORRENT_FILES_PERTTERN> [TORRENT_FILES_PERTTERN ...]",
 	Action: func(ctx *cli.Context) error {
 		printTorrentFiles(ctx.Args().Slice())
 		return nil

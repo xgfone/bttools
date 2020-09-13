@@ -4,8 +4,7 @@ A command tool collection about BitTorrent. And you can consider it as the examp
 ## 1 Install
 ```shell
 $ go get -u github.com/xgfone/bttools
-$ cd $GOPATH/src/github.com/xgfone/bttools
-$ ./build.sh install
+$ make
 ```
 
 ## 2 Commands
@@ -13,15 +12,12 @@ $ ./build.sh install
 ### 2.1 Command `torrent`
 
 ```shell
-$ torrent -h
+$ bttools torrent -h
 NAME:
-   torrent - A BitTorrent Tools
+   bttools torrent - The torrent tools
 
 USAGE:
-   torrent [global options] command [command options] [arguments...]
-
-VERSION:
-   v0.2.0
+   bttools torrent command [command options] [arguments...]
 
 COMMANDS:
    download   Download the file from the remote peers
@@ -29,14 +25,14 @@ COMMANDS:
    printinfo  Print the metainfo of the torrent file
    help, h    Shows a list of commands or help for one command
 
-GLOBAL OPTIONS:
+OPTIONS:
    --help, -h     show help (default: false)
    --version, -v  print the version (default: false)
 ```
 
 #### 2.2 Sub-Command `printinfo`
 ```shell
-$ torrent printinfo ~/Downloads/gimp-2.10.18-setup-2.exe.torrent
+$ bttools torrent printinfo ~/Downloads/gimp-2.10.18-setup-2.exe.torrent
 MagNet: magnet:?xt=urn:btih:2aa1fff0d7ca65b149194ec42957d49cb27836db&dn=gimp-2.10.18-setup-2.exe&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=udp%3A%2F%2Fopen.demonii.com%3A1337
 InfoHash: 2aa1fff0d7ca65b149194ec42957d49cb27836db
 CreatedBy: mktorrent 1.1
@@ -91,7 +87,7 @@ Info:
 
 #### 2.3 Sub-Command `getpeers`
 ```shell
-$ torrent getpeers 2aa1fff0d7ca65b149194ec42957d49cb27836db udp://tracker.leechers-paradise.org:6969
+$ bttools torrent getpeers 2aa1fff0d7ca65b149194ec42957d49cb27836db udp://tracker.leechers-paradise.org:6969
 115.75.157.253:3869
 95.56.201.138:35988
 92.37.217.46:24212
@@ -112,7 +108,7 @@ $ torrent getpeers 2aa1fff0d7ca65b149194ec42957d49cb27836db udp://tracker.leeche
 
 #### 2.4 Sub-Command `download`
 ```shell
-$ torrent.exe download ~/Downloads/gimp-2.10.18-setup-2.exe.torrent
+$ bttools torrent download ~/Downloads/gimp-2.10.18-setup-2.exe.torrent
 2020/06/19 16:09:13 Request Block from '96.255.83.163:52742': index=0, offset=0, length=16384
 2020/06/19 16:09:13 Request Block from '96.255.83.163:52742': index=0, offset=16384, length=16384
 2020/06/19 16:09:13 Request Block from '96.255.83.163:52742': index=0, offset=32768, length=16384

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package torrent
 
 import (
 	"context"
@@ -25,10 +25,10 @@ import (
 )
 
 func init() {
-	RegisterCmd(&cli.Command{
+	registerCmd(&cli.Command{
 		Name:      "getpeers",
 		Usage:     "Get the peers of the torrent from the given tracker",
-		ArgsUsage: "TORRENT_INFOHASH TRACER_URL [TRACER_URL] [TRACER_URL]",
+		ArgsUsage: "<TORRENT_INFOHASH> <TRACER_URL> [TRACER_URL ...]",
 		Flags: []cli.Flag{&cli.DurationFlag{
 			Name:  "timeout",
 			Value: time.Minute,
