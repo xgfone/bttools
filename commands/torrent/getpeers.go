@@ -45,8 +45,8 @@ func init() {
 			defer cancel()
 
 			infohash := metainfo.NewHashFromHexString(args[0])
-			resp := tracker.GetPeers(c, metainfo.Hash{}, infohash, args[1:])
-			for r := range resp {
+			resps := tracker.GetPeers(c, metainfo.Hash{}, infohash, args[1:])
+			for _, r := range resps {
 				if r.Error != nil {
 					fmt.Printf("%s: %s\n", r.Tracker, r.Error.Error())
 					continue

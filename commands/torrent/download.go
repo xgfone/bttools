@@ -131,8 +131,8 @@ func getPeersFromTrackers(id metainfo.Hash, mi metainfo.MetaInfo,
 
 	c, cancel := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()
-	resp := tracker.GetPeers(c, id, mi.InfoHash(), trackers)
-	for r := range resp {
+	resps := tracker.GetPeers(c, id, mi.InfoHash(), trackers)
+	for _, r := range resps {
 		if r.Error != nil {
 			log.Printf("tracker '%s' error: %s", r.Tracker, r.Error)
 			continue
