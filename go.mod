@@ -10,3 +10,5 @@ require (
 )
 
 go 1.11
+
+replace github.com/xgfone/bt v0.4.0 => ../bt
