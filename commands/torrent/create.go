@@ -32,11 +32,11 @@ var createCmd = &cli.Command{
 	Usage:     "generate a .torrent from a directory.",
 	ArgsUsage: "TBD",
 	Flags: []cli.Flag{
-		&cli.BoolFlag{
+		/*&cli.BoolFlag{
 			Name:    "private",
 			Aliases: []string{"p"},
 			Usage:   "(placeholder) set the private flag (Currently unsupported)",
-		},
+		},*/
 		&cli.BoolFlag{
 			Name:    "no-date",
 			Aliases: []string{"d"},
@@ -108,7 +108,7 @@ func torrentArgs(ctx *cli.Context) (pl int64, n string, p string, o string, c st
 	}
 	an = ctx.StringSlice("announce")
 	ws = ctx.StringSlice("webseed")
-	pr = ctx.Bool("private")
+	pr = false //ctx.Bool("private")
 	nd = ctx.Bool("no-date")
 	c = ctx.String("")
 
@@ -157,9 +157,6 @@ func CreateTorrent(piece_len int64, name string, path string, output string, com
 	if comment != "" {
 		mi.Comment = comment
 	}
-
-	/// TODO: set the webseed information like above.
-	/// TODO: set other fields of MetaInfo.
 
 	var out io.WriteCloser = os.Stdout
 	if o := output; o != "" {
