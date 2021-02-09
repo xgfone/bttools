@@ -115,13 +115,15 @@ func torrentArgs(ctx *cli.Context) (pl int64, n string, p string, o string, c st
 	return
 }
 
-
 // CreateTorrent creates a torrent.
 func CreateTorrent(piece_len int64, name string, path string, output string, comment string, announces []string, webseeds []string, nodate bool, priv bool) error {
 
 	info, err := metainfo.NewInfoFromFilePath(path, piece_len)
 	if err != nil {
 		return err
+	}
+	if name != "" {
+		info.Name = name
 	}
 
 	var mi metainfo.MetaInfo
