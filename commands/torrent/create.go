@@ -18,6 +18,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/urfave/cli/v2"
@@ -32,11 +33,6 @@ var createCmd = &cli.Command{
 	Usage:     "generate a .torrent from a directory.",
 	ArgsUsage: "TBD",
 	Flags: []cli.Flag{
-		/*&cli.BoolFlag{
-			Name:    "private",
-			Aliases: []string{"p"},
-			Usage:   "(placeholder) set the private flag (Currently unsupported)",
-		},*/
 		&cli.BoolFlag{
 			Name:    "no-date",
 			Aliases: []string{"d"},
@@ -79,8 +75,8 @@ var createCmd = &cli.Command{
 		},
 	},
 	Action: func(ctx *cli.Context) error {
-		piece_len, name, path, output, comment, announces, webseeds, nodate, private := torrentArgs(ctx)
-		return CreateTorrent(piece_len, name, path, output, comment, announces, webseeds, nodate, private)
+		pieceLen, name, path, output, comment, announces, webseeds, nodate, private := torrentArgs(ctx)
+		return CreateTorrent(pieceLen, name, path, output, comment, announces, webseeds, nodate, private)
 	},
 }
 
@@ -94,7 +90,7 @@ func torrentArgs(ctx *cli.Context) (pl int64, n string, p string, o string, c st
 
 	n = ctx.String("name")
 	if n == "" {
-		n = p
+		n = filepath.Base(p)
 	}
 
 	o = ctx.String("output")
@@ -108,17 +104,17 @@ func torrentArgs(ctx *cli.Context) (pl int64, n string, p string, o string, c st
 	}
 	an = ctx.StringSlice("announce")
 	ws = ctx.StringSlice("webseed")
-	pr = false //ctx.Bool("private")
+	pr = false
 	nd = ctx.Bool("no-date")
-	c = ctx.String("")
+	c = ctx.String("comment")
 
 	return
 }
 
 // CreateTorrent creates a torrent.
-func CreateTorrent(piece_len int64, name string, path string, output string, comment string, announces []string, webseeds []string, nodate bool, priv bool) error {
+func CreateTorrent(pieceLen int64, name string, path string, output string, comment string, announces []string, webseeds []string, nodate bool, priv bool) error {
 
-	info, err := metainfo.NewInfoFromFilePath(path, piece_len)
+	info, err := metainfo.NewInfoFromFilePath(path, pieceLen)
 	if err != nil {
 		return err
 	}
@@ -144,7 +140,6 @@ func CreateTorrent(piece_len int64, name string, path string, output string, com
 	switch len(webseeds) {
 	case 0:
 	default:
-		mi.URLList = metainfo.URLList{}
 		for _, seed := range webseeds {
 			mi.URLList = append(mi.URLList, seed)
 		}
@@ -153,10 +148,6 @@ func CreateTorrent(piece_len int64, name string, path string, output string, com
 	if !nodate {
 		mi.CreationDate = time.Now().Unix()
 	}
-
-	//	if private {
-	//	  mi.Private = private
-	//	}
 
 	if comment != "" {
 		mi.Comment = comment

@@ -5,7 +5,7 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/samuel/go-zookeeper v0.0.0-20201211165307-7117e9ea2414 // indirect
 	github.com/urfave/cli/v2 v2.3.0
-	github.com/xgfone/bt v0.4.0
+	github.com/xgfone/bt v0.4.1
 	github.com/xgfone/gconf/v5 v5.0.0
 	github.com/xgfone/goapp v0.17.0
 	github.com/xgfone/gover v0.3.0
@@ -15,5 +15,3 @@ require (
 )
 
 go 1.11
-
-replace github.com/xgfone/bt v0.4.0 => ../bt
