@@ -106,8 +106,8 @@ github.com/vishvananda/netlink v1.1.0 h1:1iyaYNBLmP6L0220aDnYQpo1QEV4t4hJ+xEEhhJ
 github.com/vishvananda/netlink v1.1.0/go.mod h1:cTgwzPIzzgDAYoQrMm0EdrjRUBkTqKYppBueQtXaqoE=
 github.com/vishvananda/netns v0.0.0-20191106174202-0a2b9b5464df h1:OviZH7qLw/7ZovXvuNyL3XQl8UFofeikI1NW1Gypu7k=
 github.com/vishvananda/netns v0.0.0-20191106174202-0a2b9b5464df/go.mod h1:JP3t17pCcGlemwknint6hfoeCVQrEMVwxRLRjXpq+BU=
-github.com/xgfone/bt v0.4.0 h1:U9UwkPxYSDbI7EpStmGdvFxqwDIKz9y9IPcBkYGCQ8s=
-github.com/xgfone/bt v0.4.0/go.mod h1:/GuvKo3WdkvlVahN84cjVWyia9ZJoxx/3BFIFZ5eGI4=
+github.com/xgfone/bt v0.4.1 h1:51j3Mv9wqn415JsYJTYUIlMgcB3dAdQgnNPXDhwS78E=
+github.com/xgfone/bt v0.4.1/go.mod h1:/GuvKo3WdkvlVahN84cjVWyia9ZJoxx/3BFIFZ5eGI4=
 github.com/xgfone/cast v0.1.0 h1:iXykFomf2xhXJi+M7v/wVDXXRs+qqUAfh0knADglorc=
 github.com/xgfone/cast v0.1.0/go.mod h1:T+gPbsD/fD72zz9wy/XaLTv236sPHaf6TcT7uvIhV/k=
 github.com/xgfone/cast v0.5.0 h1:5nROCXsIKvdD+zxNeiiPT1BqnLM8sDm4elTYd5KR50c=
