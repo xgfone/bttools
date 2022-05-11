@@ -20,19 +20,19 @@ USAGE:
    bttools torrent command [command options] [arguments...]
 
 COMMANDS:
-   download   Download the file from the remote peers
-   getpeers   Get the peers of the torrent from the given tracker
-   printinfo  Print the metainfo of the torrent file
-   help, h    Shows a list of commands or help for one command
+   create    Generate a .torrent file from a directory
+   download  Download the .torrent file from the remote peers
+   dumpinfo  Print the metainfo of the torrent file
+   getpeers  Get the peers of the torrent from the given tracker
+   help, h   Shows a list of commands or help for one command
 
 OPTIONS:
-   --help, -h     show help (default: false)
-   --version, -v  print the version (default: false)
+   --help, -h  show help (default: false)
 ```
 
-#### 2.2 Sub-Command `printinfo`
+#### 2.2 Sub-Command `dumpinfo`
 ```shell
-$ bttools torrent printinfo ~/Downloads/gimp-2.10.18-setup-2.exe.torrent
+$ bttools torrent dumpinfo ~/Downloads/gimp-2.10.18-setup-2.exe.torrent
 MagNet: magnet:?xt=urn:btih:2aa1fff0d7ca65b149194ec42957d49cb27836db&dn=gimp-2.10.18-setup-2.exe&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=udp%3A%2F%2Fopen.demonii.com%3A1337
 InfoHash: 2aa1fff0d7ca65b149194ec42957d49cb27836db
 CreatedBy: mktorrent 1.1

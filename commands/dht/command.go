@@ -1,4 +1,4 @@
-// Copyright 2020 xgfone
+// Copyright 2022 xgfone
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,27 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package command
+package dht
 
 import (
+	"fmt"
+
 	"github.com/urfave/cli/v2"
-	"github.com/xgfone/bttools/commands/dht"
-	"github.com/xgfone/bttools/commands/peer"
-	"github.com/xgfone/bttools/commands/torrent"
-	"github.com/xgfone/bttools/commands/tracker"
 )
 
-// Commands is the set of all the sub-commands.
-var Commands []*cli.Command
-
-// RegisterCmd registers the command as the sub-command of the root.
-func RegisterCmd(cmd *cli.Command) {
-	Commands = append(Commands, cmd)
-}
-
-func init() {
-	RegisterCmd(dht.Command)
-	RegisterCmd(peer.Command)
-	RegisterCmd(tracker.Command)
-	RegisterCmd(torrent.Command)
+// Command is used to start a DHT server.
+var Command = &cli.Command{
+	Name:  "dht",
+	Usage: "A DHT server",
+	Flags: []cli.Flag{},
+	Action: func(ctx *cli.Context) error {
+		fmt.Println("Unimplemented")
+		return nil
+	},
 }

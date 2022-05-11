@@ -1,4 +1,4 @@
-// Copyright 2020 xgfone
+// Copyright 2020~2022 xgfone
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package torrent
 
 import (
+	"context"
 	"crypto/sha1"
 	"fmt"
 	"io"
@@ -26,26 +27,25 @@ import (
 	"github.com/xgfone/bt/metainfo"
 	pp "github.com/xgfone/bt/peerprotocol"
 	"github.com/xgfone/bt/tracker"
-	"golang.org/x/net/context"
 )
 
 func init() {
 	registerCmd(&cli.Command{
 		Name:      "download",
-		Usage:     "Download the file from the remote peers",
+		Usage:     "Download the .torrent file from the remote peers",
 		ArgsUsage: "<TORRENT_FILE>",
 		Flags: []cli.Flag{
 			&cli.StringSliceFlag{
 				Name:  "tracker",
-				Usage: "The URL of the tracker.",
+				Usage: "The URL of the tracker",
 			},
 			&cli.StringSliceFlag{
 				Name:  "peer",
-				Usage: "The address of the peer.",
+				Usage: "The address of the peer",
 			},
 			&cli.StringFlag{
 				Name:  "savedir",
-				Usage: "The directory to save the downloaded file.",
+				Usage: "The directory to save the downloaded file",
 			},
 			&cli.UintFlag{
 				Name:  "lastindex",

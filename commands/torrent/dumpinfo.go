@@ -1,4 +1,4 @@
-// Copyright 2020 xgfone
+// Copyright 2020~2022 xgfone
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import (
 	"github.com/xgfone/bt/metainfo"
 )
 
-func init() { registerCmd(printCmd) }
+func init() { registerCmd(dumpinfoCmd) }
 
-var printCmd = &cli.Command{
-	Name:      "printinfo",
+var dumpinfoCmd = &cli.Command{
+	Name:      "dumpinfo",
 	Usage:     "Print the metainfo of the torrent file",
 	ArgsUsage: "<TORRENT_FILES_PERTTERN> [TORRENT_FILES_PERTTERN ...]",
 	Action: func(ctx *cli.Context) error {
@@ -37,7 +37,7 @@ var printCmd = &cli.Command{
 }
 
 func printTorrentFiles(patterns []string) {
-	// Get all the torrent file
+	// Get all the torrent files
 	files := make([]string, 0, len(patterns))
 	for _, s := range patterns {
 		ss, err := filepath.Glob(s)
@@ -48,7 +48,7 @@ func printTorrentFiles(patterns []string) {
 		files = append(files, ss...)
 	}
 
-	// Print each torrent file
+	// Print each torrent file.
 	for _, file := range files {
 		printTorrentFile(file)
 	}
@@ -68,7 +68,7 @@ func printTorrentFile(filename string) {
 	}
 
 	infohash := mi.InfoHash()
-	fmt.Printf("MagNet: %s\n", mi.Magnet(info.Name, infohash).String())
+	fmt.Printf("Magnet: %s\n", mi.Magnet(info.Name, infohash).String())
 	fmt.Printf("InfoHash: %s\n", infohash)
 	printValue("Encoding: ", mi.Encoding)
 	printValue("CreatedBy: ", mi.CreatedBy)

@@ -16,15 +16,16 @@ package initapp
 
 import (
 	"fmt"
+	stdlog "log"
 
 	"github.com/urfave/cli/v2"
-	"github.com/xgfone/gconf/v5"
-	"github.com/xgfone/goapp/config"
+	"github.com/xgfone/go-atexit"
+	"github.com/xgfone/go-log"
+	"github.com/xgfone/go-log/writer"
 	"github.com/xgfone/gover"
 )
 
 func init() {
-	gconf.UnregisterOpts(gconf.ConfigFileOpt)
 	cli.VersionPrinter = func(c *cli.Context) {
 		fmt.Fprintln(c.App.Writer, c.App.Version)
 	}
@@ -35,7 +36,30 @@ func NewApp() *cli.App {
 	app := cli.NewApp()
 	app.Usage = "A BitTorrent Tools"
 	app.Version = gover.Version
-	app.Before = func(*cli.Context) error { InitLogging(); return nil }
-	app.Flags = config.ConvertOptsToCliFlags()
+	app.Flags = []cli.Flag{
+		&cli.StringFlag{
+			Name:  "log.file",
+			Usage: "The log file path",
+		},
+		&cli.StringFlag{
+			Name:  "log.level",
+			Value: "info",
+			Usage: "The log level, such as debug, info, etc",
+		},
+	}
+	app.Action = func(ctx *cli.Context) error {
+		if logfile := ctx.String("log.file"); logfile != "" {
+			file := log.FileWriter(logfile, "100M", 100)
+			log.SetWriter(writer.SafeWriter(file))
+			atexit.RegisterWithPriority(0, func() { file.Close() })
+		}
+		log.SetLevel(log.ParseLevel(ctx.String("log.level")))
+		stdlog.SetOutput(log.DefaultLogger.WithDepth(2))
+		return nil
+	}
+	app.After = func(ctx *cli.Context) error {
+		atexit.Execute()
+		return nil
+	}
 	return app
 }

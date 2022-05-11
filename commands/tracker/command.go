@@ -1,4 +1,4 @@
-// Copyright 2020 xgfone
+// Copyright 2022 xgfone
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,24 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package initapp
+package tracker
 
 import (
-	"github.com/xgfone/gconf/v5"
-	"github.com/xgfone/goapp/log"
+	"fmt"
+
+	"github.com/urfave/cli/v2"
 )
 
-func init() {
-	for i, opt := range log.LogOpts {
-		opt.Aliases = nil
-		log.LogOpts[i] = opt
-	}
-	gconf.RegisterOpts(log.LogOpts...)
-}
-
-// InitLogging initializes the logging.
-func InitLogging() {
-	logfile := gconf.GetString(log.LogOpts[0].Name)
-	loglevel := gconf.GetString(log.LogOpts[1].Name)
-	log.InitLogging(loglevel, logfile)
+// Command is used to start a BT tracker server.
+var Command = &cli.Command{
+	Name:  "tracker",
+	Usage: "A BT tracker server",
+	Flags: []cli.Flag{},
+	Action: func(ctx *cli.Context) error {
+		fmt.Println("Unimplemented")
+		return nil
+	},
 }

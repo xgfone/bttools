@@ -1,4 +1,4 @@
-// Copyright 2020 xgfone
+// Copyright 2020~2022 xgfone
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ package torrent
 
 import (
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -30,132 +29,142 @@ func init() { registerCmd(createCmd) }
 
 var createCmd = &cli.Command{
 	Name:      "create",
-	Usage:     "generate a .torrent from a directory.",
-	ArgsUsage: "TBD",
+	Usage:     "Generate a .torrent file from a directory",
+	ArgsUsage: "[TORRENT_DIRECTORY]",
 	Flags: []cli.Flag{
 		&cli.BoolFlag{
 			Name:    "no-date",
 			Aliases: []string{"d"},
-			Usage:   "leave the date field unset",
+			Usage:   "Leave the date field unset",
 		},
 		&cli.StringSliceFlag{
 			Name:    "webseed",
 			Aliases: []string{"w"},
-			Usage:   "list of possible web seed URLs to use",
+			Usage:   "List of possible webseed URLs to use",
 		},
 		&cli.StringSliceFlag{
 			Name:    "announce",
 			Aliases: []string{"a"},
 			Value:   cli.NewStringSlice("udp://tracker.openbittorrent.com:80/announce"),
-			Usage:   "list of announce URLs to use",
+			Usage:   "List of announce URLs to use",
 		},
 		&cli.StringFlag{
 			Name:    "comment",
 			Aliases: []string{"c"},
 			Value:   "",
-			Usage:   "add a comment to the torrent file",
+			Usage:   "Add a comment to the torrent file",
 		},
 		&cli.StringFlag{
 			Name:    "output",
 			Aliases: []string{"o"},
 			Value:   "",
-			Usage:   "path to output the .torrent file, default is the file or directory name.torent",
+			Usage:   "The path of .torrent file to be output",
 		},
 		&cli.StringFlag{
 			Name:    "name",
 			Aliases: []string{"n"},
 			Value:   "",
-			Usage:   "path to output the .torrent file, default is $name.torrent",
+			Usage:   "The name of the torrent",
 		},
-		&cli.IntFlag{
+		&cli.Int64Flag{
 			Name:    "length",
 			Aliases: []string{"l"},
 			Value:   256,
-			Usage:   "piece length to use in kilobytes, default is 256. mktorrent syntax(powers of 2, 15-32) are also supported.",
+			Usage:   "Piece length to use in kilobytes, default is 256. mktorrent syntax(powers of 2, 15-32) are also supported",
 		},
 	},
-	Action: func(ctx *cli.Context) error {
-		pieceLen, name, path, output, comment, announces, webseeds, nodate, private := torrentArgs(ctx)
-		return CreateTorrent(pieceLen, name, path, output, comment, announces, webseeds, nodate, private)
+	Action: func(ctx *cli.Context) (err error) {
+		dirs := ctx.Args().Slice()
+		if len(dirs) == 0 {
+			dirs = []string{"."}
+		}
+
+		var config CreateTorrentConfig
+		config.Name = ctx.String("name")
+		config.Output = ctx.String("output")
+		config.NoDate = ctx.Bool("no-date")
+		config.Comment = ctx.String("comment")
+		config.WebSeeds = ctx.StringSlice("webseed")
+		config.Announces = ctx.StringSlice("announce")
+
+		if length := ctx.Int64("length"); length < 64 {
+			config.PieceLength = length ^ 2
+		} else {
+			config.PieceLength = length * 1024
+		}
+
+		for _, dir := range dirs {
+			config.RootDir, err = filepath.Abs(dir)
+			if err != nil {
+				return err
+			}
+
+			if config.Output == "" {
+				name := config.Name
+				if name == "" {
+					name = filepath.Base(config.RootDir)
+				}
+				config.Output = name + ".torrent"
+			}
+
+			if err := CreateTorrent(config); err != nil {
+				return err
+			}
+		}
+
+		return nil
 	},
 }
 
-func torrentArgs(ctx *cli.Context) (pl int64, n string, p string, o string, c string, an []string, ws []string, nd bool, pr bool) {
-	dirs := ctx.Args().Slice()
-	if len(dirs) > 1 {
-		log.Println("Input invalid, please use only one file or directory at a time.")
-		os.Exit(1)
-	}
-	p = dirs[0]
-
-	n = ctx.String("name")
-	if n == "" {
-		n = filepath.Base(p)
-	}
-
-	o = ctx.String("output")
-	if o == "" {
-		o = n + ".torrent"
-	}
-	if ctx.Int("length") < 64 {
-		pl = int64(ctx.Int("length") ^ 2)
-	} else {
-		pl = int64(ctx.Int("length") * 1000)
-	}
-	an = ctx.StringSlice("announce")
-	ws = ctx.StringSlice("webseed")
-	pr = false
-	nd = ctx.Bool("no-date")
-	c = ctx.String("comment")
-
-	return
+// CreateTorrentConfig is the configuration information to create a .torrent file.
+type CreateTorrentConfig struct {
+	PieceLength int64
+	Name        string
+	RootDir     string
+	Output      string
+	Comment     string
+	Announces   []string
+	WebSeeds    []string
+	NoDate      bool
 }
 
-// CreateTorrent creates a torrent.
-func CreateTorrent(pieceLen int64, name string, path string, output string, comment string, announces []string, webseeds []string, nodate bool, priv bool) error {
-
-	info, err := metainfo.NewInfoFromFilePath(path, pieceLen)
+// CreateTorrent creates a .torrent file.
+func CreateTorrent(config CreateTorrentConfig) error {
+	info, err := metainfo.NewInfoFromFilePath(config.RootDir, config.PieceLength)
 	if err != nil {
 		return err
 	}
-	if name != "" {
-		info.Name = name
+
+	if config.Name != "" {
+		info.Name = config.Name
 	}
 
 	var mi metainfo.MetaInfo
+	mi.Comment = config.Comment
 	mi.InfoBytes, err = bencode.EncodeBytes(info)
 	if err != nil {
 		return err
 	}
 
-	// Set the announce information.
-	switch len(announces) {
+	switch len(config.Announces) {
 	case 0:
 	case 1:
-		mi.Announce = announces[0]
+		mi.Announce = config.Announces[0]
 	default:
-		mi.AnnounceList = metainfo.AnnounceList{announces}
+		mi.AnnounceList = metainfo.AnnounceList{config.Announces}
 	}
 
-	switch len(webseeds) {
-	case 0:
-	default:
-		for _, seed := range webseeds {
-			mi.URLList = append(mi.URLList, seed)
-		}
+	for _, seed := range config.WebSeeds {
+		mi.URLList = append(mi.URLList, seed)
 	}
 
-	if !nodate {
+	if !config.NoDate {
 		mi.CreationDate = time.Now().Unix()
 	}
 
-	if comment != "" {
-		mi.Comment = comment
-	}
-
 	var out io.WriteCloser = os.Stdout
-	if o := output; o != "" {
-		out, err = os.OpenFile(o, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	if config.Output != "" {
+		out, err = os.OpenFile(config.Output, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 		if err != nil {
 			return err
 		}
