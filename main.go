@@ -1,4 +1,4 @@
-// Copyright 2020 xgfone
+// Copyright 2023 xgfone
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,27 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
+	"github.com/urfave/cli/v2"
 	"github.com/xgfone/bttools/pkg/command"
-	"github.com/xgfone/bttools/pkg/initapp"
+	"github.com/xgfone/gover"
 )
 
+func printVersion(c *cli.Context) {
+	fmt.Fprintln(c.App.Writer, c.App.Version)
+}
+
 func main() {
-	app := initapp.NewApp()
+	app := cli.NewApp()
+	app.Usage = "A BitTorrent Tools"
+	app.Version = gover.Version
 	app.Commands = command.Commands
-	app.RunAndExitOnError()
+	app.EnableBashCompletion = true
+	cli.VersionPrinter = printVersion
+	if err := app.Run(os.Args); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }

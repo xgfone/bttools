@@ -1,4 +1,4 @@
-// Copyright 2022 xgfone
+// Copyright 2023 xgfone
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,21 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tracker
+// Package torrent provides the sub-commands about torrent.
+package torrent
 
-import (
-	"fmt"
+import "github.com/urfave/cli/v2"
 
-	"github.com/urfave/cli/v2"
-)
-
-// Command is used to start a BT tracker server.
+// Command is the sub-command torrent.
 var Command = &cli.Command{
-	Name:  "tracker",
-	Usage: "A BT tracker server",
-	Flags: []cli.Flag{},
-	Action: func(ctx *cli.Context) error {
-		fmt.Println("Unimplemented")
-		return nil
-	},
+	Name:  "torrent",
+	Usage: "The torrent tools",
+}
+
+// registerCmd registers the command as the sub-command of the root.
+func registerCmd(cmd *cli.Command) {
+	Command.Subcommands = append(Command.Subcommands, cmd)
 }

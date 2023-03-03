@@ -1,4 +1,4 @@
-// Copyright 2020~2022 xgfone
+// Copyright 2023 xgfone
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,55 +16,60 @@ package torrent
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"reflect"
+	"time"
 
 	"github.com/urfave/cli/v2"
 	"github.com/xgfone/bt/metainfo"
+	"github.com/xgfone/bttools/pkg/helper"
 )
 
-func init() { registerCmd(dumpinfoCmd) }
-
-var dumpinfoCmd = &cli.Command{
-	Name:      "dumpinfo",
-	Usage:     "Print the metainfo of the torrent file",
-	ArgsUsage: "<TORRENT_FILES_PERTTERN> [TORRENT_FILES_PERTTERN ...]",
-	Action: func(ctx *cli.Context) error {
-		printTorrentFiles(ctx.Args().Slice())
-		return nil
-	},
+func init() {
+	registerCmd(&cli.Command{
+		Name:      "info",
+		Usage:     "Print the metainfo of the .torrent file and exit",
+		ArgsUsage: "<TORRENT_FILES_PERTTERN> [TORRENT_FILES_PERTTERN ...]",
+		Action: func(ctx *cli.Context) error {
+			return printTorrentFiles(ctx.Args().Slice())
+		},
+	})
 }
 
-func printTorrentFiles(patterns []string) {
+func printTorrentFiles(patterns []string) (err error) {
 	// Get all the torrent files
 	files := make([]string, 0, len(patterns))
 	for _, s := range patterns {
 		ss, err := filepath.Glob(s)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			return err
 		}
 		files = append(files, ss...)
 	}
 
-	// Print each torrent file.
-	for _, file := range files {
-		printTorrentFile(file)
+	for i, file := range files {
+		if i > 0 {
+			fmt.Println()
+		}
+
+		err = printTorrentFile(file)
+		if err != nil {
+			return
+		}
 	}
+
+	return
 }
 
-func printTorrentFile(filename string) {
+func printTorrentFile(filename string) (err error) {
 	mi, err := metainfo.LoadFromFile(filename)
 	if err != nil {
-		fmt.Printf("fail to load '%s': %s", filename, err)
-		return
+		return fmt.Errorf("fail to load the torrent file '%s': %w", filename, err)
 	}
 
 	info, err := mi.Info()
 	if err != nil {
-		fmt.Printf("fail to decode info of '%s': %s", filename, err)
-		return
+		return fmt.Errorf("fail to decode metainfo of '%s': %s", filename, err)
 	}
 
 	infohash := mi.InfoHash()
@@ -72,7 +77,7 @@ func printTorrentFile(filename string) {
 	fmt.Printf("InfoHash: %s\n", infohash)
 	printValue("Encoding: ", mi.Encoding)
 	printValue("CreatedBy: ", mi.CreatedBy)
-	printValue("CreationDate: ", mi.CreationDate)
+	printValue("CreationDate: ", time.Unix(mi.CreationDate, 0).Format(time.RFC3339))
 	printValue("Comment: ", mi.Comment)
 	printTrackers(mi)
 	printDHTNodes(mi)
@@ -81,10 +86,12 @@ func printTorrentFile(filename string) {
 	// Print the info part
 	fmt.Println("Info:")
 	fmt.Printf("    Name: %s\n", info.Name)
-	printSingalFile("    ", info)
-	fmt.Printf("    PieceLength: %d\n", info.PieceLength)
+	fmt.Printf("    TotalLength: %s\n", helper.FormatSize(info.TotalLength()))
+	fmt.Printf("    PieceLength: %s\n", helper.FormatSize(info.PieceLength))
 	fmt.Printf("    PieceNumber: %d\n", info.CountPieces())
-	printMultiFiles("    ", info)
+	printFiles("    ", info)
+
+	return
 }
 
 func printValue(name string, v interface{}) {
@@ -121,28 +128,24 @@ func printURLList(mi metainfo.MetaInfo) {
 		return
 	}
 
-	fmt.Println("URLs:")
+	fmt.Println("WebSeed URLs:")
 	for _, s := range mi.URLList {
 		printValue("    ", s)
 	}
 }
 
-func printSingalFile(prefix string, info metainfo.Info) {
+func printFiles(prefix string, info metainfo.Info) {
 	if !info.IsDir() {
-		fmt.Printf("%sLength: %d\n", prefix, info.Length)
+		return
 	}
-}
 
-func printMultiFiles(prefix string, info metainfo.Info) {
-	if info.IsDir() {
-		fmt.Printf("%sTotalLength: %d\n", prefix, info.TotalLength())
-		fmt.Printf("%sFiles:\n", prefix)
-		for _, file := range info.AllFiles() {
-			fmt.Printf("%s    PathName: %s\n", prefix, file.Path(info))
-			fmt.Printf("%s    Length: %d\n", prefix, file.Length)
+	fmt.Printf("%sFiles:\n", prefix)
+	for i, file := range info.AllFiles() {
+		if i > 0 {
 			fmt.Println()
 		}
-	} else {
-		fmt.Println()
+
+		fmt.Printf("%s    Path: %s\n", prefix, file.Path(info))
+		fmt.Printf("%s    Length: %s\n", prefix, helper.FormatSize(file.Length))
 	}
 }

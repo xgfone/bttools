@@ -1,4 +1,4 @@
-// Copyright 2020 xgfone
+// Copyright 2023 xgfone
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package command is used to collect all the commands.
 package command
 
 import (
 	"github.com/urfave/cli/v2"
-	"github.com/xgfone/bttools/commands/dht"
-	"github.com/xgfone/bttools/commands/peer"
-	"github.com/xgfone/bttools/commands/torrent"
-	"github.com/xgfone/bttools/commands/tracker"
+	"github.com/xgfone/bttools/pkg/command/torrent"
 )
 
 // Commands is the set of all the sub-commands.
@@ -31,8 +29,5 @@ func RegisterCmd(cmd *cli.Command) {
 }
 
 func init() {
-	RegisterCmd(dht.Command)
-	RegisterCmd(peer.Command)
-	RegisterCmd(tracker.Command)
 	RegisterCmd(torrent.Command)
 }
