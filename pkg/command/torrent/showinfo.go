@@ -27,8 +27,8 @@ import (
 
 func init() {
 	registerCmd(&cli.Command{
-		Name:      "info",
-		Usage:     "Print the metainfo of the .torrent file and exit",
+		Name:      "showinfo",
+		Usage:     "Print the metainfo information of the .torrent file and exit",
 		ArgsUsage: "<TORRENT_FILES_PERTTERN> [TORRENT_FILES_PERTTERN ...]",
 		Action: func(ctx *cli.Context) error {
 			return printTorrentFiles(ctx.Args().Slice())

@@ -43,7 +43,7 @@ var createCmd = &cli.Command{
 		},
 		&cli.StringSliceFlag{
 			Name:  "announce",
-			Value: cli.NewStringSlice("udp://tracker.openbittorrent.com:80/announce"),
+			Value: cli.NewStringSlice(defaultTrackers...),
 			Usage: "List of announce URLs to use",
 		},
 		&cli.StringSliceFlag{

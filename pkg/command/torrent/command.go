@@ -17,6 +17,8 @@ package torrent
 
 import "github.com/urfave/cli/v2"
 
+var defaultTrackers = []string{"udp://tracker.openbittorrent.com:80/announce"}
+
 // Command is the sub-command torrent.
 var Command = &cli.Command{
 	Name:  "torrent",
